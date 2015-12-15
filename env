@@ -1,0 +1,6 @@
+# An example env file to get ideas
+USERNAME=
+PASSWORD=
+DOMAIN=
+IO=
+# Basically that's it. Further processing is handled by the Socket.IO server / call manager.
