@@ -3,7 +3,7 @@
     pkg = require './package.json'
 
     module.exports = renderable (cfg) ->
-      {doctype,document,section,configuration,settings,params,param,modules,module,load,network_lists,list,node,global_settings,profiles,profile,mappings,map,context,extension,condition,action,macros} = L
+      {doctype,document,section,configuration,settings,params,param,modules,module,load,network_lists,list,node,global_settings,profiles,profile,mappings,map,context,extension,condition,action,macros,gateways,gateway} = L
       modules_to_load = [
         'mod_logfile'
         'mod_event_socket'
