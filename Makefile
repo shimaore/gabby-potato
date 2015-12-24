@@ -25,3 +25,10 @@ dev: image
 	# docker export gabby-potato-test-1 | tar xOvf - opt/gabby-potato/log/server.log ; \
 	# docker export gabby-potato-test-1 | tar xOvf - opt/gabby-potato/log/freeswitch.log ; \
 	# docker rm gabby-potato-test-1
+
+local: image
+	DEBUG='*,-esl:*,esl:response,-engine.io-client:*,-socket.io-parser' coffee local/app.coffee.md &
+	docker run --rm --env-file=$$PWD/local/env --net host --name gabby-potato-test-2 ${NAME}:${TAG}
+
+shell:
+	docker exec -t -i gabby-potato-test-2 /bin/bash

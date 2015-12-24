@@ -19,7 +19,7 @@ priority=10
 autorestart=true
 
 [program:freeswitch]
-command=/opt/freeswitch/bin/freeswitch -c -nonat -nonatmap -conf %(here)s/conf -log %(here)s/log -db /dev/shm/freeswitch
+command=/opt/freeswitch/bin/freeswitch -c -conf %(here)s/conf -log %(here)s/log -db /dev/shm/freeswitch
 stdout_logfile=%(here)s/log/%(program_name)s.log
 stderr_logfile=%(here)s/log/%(program_name)s.log
 autostart=false

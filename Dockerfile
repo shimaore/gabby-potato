@@ -1,4 +1,4 @@
-FROM shimaore/freeswitch:2.1.2
+FROM shimaore/freeswitch-with-sounds:2.2.11
 MAINTAINER Stéphane Alnet <stephane@shimaore.net>
 ENV NODE_ENV production
 
