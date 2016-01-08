@@ -3,8 +3,16 @@
     pkg = require './package'
     debug = (require 'debug') "#{pkg.name}:client_handler"
 
+    Promise = require 'bluebird'
+    fs = Promise.promisifyAll require 'fs'
+    path = require 'path'
+
     module.exports = client_handler = (cfg,io) ->
       ->
+
+Events towards/from the Socket.IO client
+----------------------------------------
+
         debug 'Client started'
         io.emit 'client started',
           username: cfg.username
@@ -35,6 +43,22 @@
         io.on 'shutdown', seem ->
           debug 'shutdown'
           yield supervisor.shutdownAsync()
+
+        io.on 'put-fax', seem ({data,name},ack) ->
+          debug 'put-fax'
+          name ?= uuid.v4()
+          file = path.join process.env.SPOOL, 'fax', name
+          yield fs.writeFileAsync file, data
+          ack? {file,name}
+
+        io.on 'get-fax', seem (name,ack) ->
+          debug 'get-fax'
+          file = path.join process.env.SPOOL, 'fax', name
+          data = yield fs.readFileAsync file
+          ack? {data,name,file}
+
+Events towards/from the Event Layer Socket
+------------------------------------------
 
         @on 'DTMF', ({body}) =>
           io.emit 'dtmf', body['DTMF-Digit']
