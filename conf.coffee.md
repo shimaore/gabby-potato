@@ -85,11 +85,11 @@
                   param "user-agent-string" , "FreeSWITCH/SoftPhone"
                   param "debug" , 0
                   param "sip-trace" , yes
-                  param "context" , "public"
 
 See [inline dialplain in SIP profile](https://wiki.freeswitch.org/wiki/Misc._Dialplan_Tools_InlineDialplan#SIP_Profile).
 
                   param "dialplan" , "inline:'socket:#{cfg.server_host}:#{cfg.server_socket} async full'"
+                  param "context" , 'dummy-unused'
                   param "sip-ip" , "auto"
                   param "ext-sip-ip" , "auto-nat"
                   # param "sip-port" , "auto"
