@@ -14,9 +14,6 @@ Events towards/from the Socket.IO client
 ----------------------------------------
 
         debug 'Client started'
-        io.emit 'client started',
-          username: cfg.username
-          domain: cfg.domain
         io.on 'originate', seem (destination,ack) =>
           uuid = uuid.v4()
           cmd = "originate {origination_uuid=#{uuid},sip_cid_type=none}sofia/gateway/#{cfg.domain}/#{destination} '&socket(#{cfg.server_host}:#{cfg.server_socket} async full)'"
@@ -64,3 +61,11 @@ Events towards/from the Event Layer Socket
           io.emit 'dtmf', body['DTMF-Digit']
         @on 'freeswitch_disconnect_notice', ->
           io.emit 'freeswitch_disconnect_notice'
+
+Indicate to the Socket.IO partner that we are ready
+---------------------------------------------------
+
+        io.emit 'client started',
+          username: cfg.username
+          domain: cfg.domain
+        debug 'Ready'
