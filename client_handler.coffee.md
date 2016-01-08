@@ -45,18 +45,24 @@ Events towards/from the Socket.IO client
           debug 'put-fax', {name}
           name ?= uuid.v4()
           file = path.join process.env.SPOOL, 'fax', name
-          debug 'put-fax', {file}
-          yield fs.writeFileAsync file, data
-          debug 'put-fax: ack', {file,name}
-          ack? {file,name}
+          debug 'put-fax', {file,name}
+          res = yield fs.writeFileAsync(file, data).catch (error) ->
+            debug "put-fax: writeFileAsync: #{error}", {file}
+            error:"#{error}"
+          debug 'put-fax: ack', {file,name,res}
+          ack? {file,name,res}
 
         io.on 'get-fax', seem (name,ack) ->
           debug 'get-fax', {name}
           file = path.join process.env.SPOOL, 'fax', name
           debug 'get-fax', {file}
-          data = yield fs.readFileAsync file
+          res = {}
+          data = yield fs.readFileAsync(file).catch (error) ->
+            debug "get-fax: readFileAsync: #{error}", {file}
+            res = error:"#{error}"
+            null
           debug 'get-fax: ack', {file,name}
-          ack? {data,name,file}
+          ack? {data,file,name,res}
 
 Events towards/from the Event Layer Socket
 ------------------------------------------
