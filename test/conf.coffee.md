@@ -12,6 +12,7 @@
           username: 'foo'
           password: 'bar'
           expire: 1800
+        process.env.SPOOL = '/opt/freeswitch/var/spool'
         expect(conf cfg).to.equal '''
           <?xml version="1.0" encoding="utf-8" ?>
           <document type="freeswitch/xml">

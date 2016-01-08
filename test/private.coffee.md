@@ -9,7 +9,7 @@
       host: '127.0.0.1'
       port: 3456
     describe "Registered", ->
-      @timeout 14000
+      @timeout 20000
       started = false
       name = "#{pkg.name}-test-1"
       container = null
