@@ -42,16 +42,20 @@ Events towards/from the Socket.IO client
           yield supervisor.shutdownAsync()
 
         io.on 'put-fax', seem ({data,name},ack) ->
-          debug 'put-fax'
+          debug 'put-fax', {name}
           name ?= uuid.v4()
           file = path.join process.env.SPOOL, 'fax', name
+          debug 'put-fax', {file}
           yield fs.writeFileAsync file, data
+          debug 'put-fax: ack', {file,name}
           ack? {file,name}
 
         io.on 'get-fax', seem (name,ack) ->
-          debug 'get-fax'
+          debug 'get-fax', {name}
           file = path.join process.env.SPOOL, 'fax', name
+          debug 'get-fax', {file}
           data = yield fs.readFileAsync file
+          debug 'get-fax: ack', {file,name}
           ack? {data,name,file}
 
 Events towards/from the Event Layer Socket
