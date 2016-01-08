@@ -1,6 +1,7 @@
 FROM shimaore/freeswitch-with-sounds:2.2.11
 MAINTAINER Stéphane Alnet <stephane@shimaore.net>
 ENV NODE_ENV production
+ENV SPOOL /opt/freeswitch/var/spool
 
 USER root
 RUN \
@@ -42,6 +43,6 @@ RUN \
     /opt/freeswtch/include/freeswitch \
     /opt/freeswitch/share/freeswitch/fonts \
     /opt/freeswitch/htdocs && \
-  mkdir -p /opt/freeswitch/var/spool/fax \
-           /opt/freeswitch/var/spool/modem
+  mkdir -p ${SPOOL}/fax \
+           ${SPOOL}/modem
 CMD ["/opt/gabby-potato/supervisord.conf.sh"]

@@ -71,7 +71,7 @@ Hylafax-type modems
             tag 'modem-settings', ->
               param 'verbose', true
               param 'total-modems', cfg.total_modems ? 2
-              param 'directory', '/opt/freeswitch/var/spool/modem'
+              param 'directory', "#{process.env.SPOOL}/modem"
 
 Inbound calls to modems
 
@@ -86,7 +86,7 @@ Inbound calls to modems
               param 'ident', 'Gabby Potato'
               param 'header', 'Gabby Potato over SpanDSP'
 
-              param 'spool-dir', '/opt/freeswitch/var/spool/fax'
+              param 'spool-dir', "#{process.env.SPOOL}/fax"
               param 'file-prefix', 'fax-rx-'
 
           configuration 'sofia.conf', ->
