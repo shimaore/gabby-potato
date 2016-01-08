@@ -36,5 +36,12 @@ COPY . /opt/gabby-potato/
 RUN \
   npm install && \
   npm cache clean && \
-  rm -rf /home/freeswitch/.node-gyp /opt/freeswitch/etc/freeswitch/* /opt/freeswtch/include/freeswitch /opt/freeswitch/share/freeswitch/fonts /opt/freeswitch/htdocs
+  rm -rf \
+    /home/freeswitch/.node-gyp \
+    /opt/freeswitch/etc/freeswitch/* \
+    /opt/freeswtch/include/freeswitch \
+    /opt/freeswitch/share/freeswitch/fonts \
+    /opt/freeswitch/htdocs && \
+  mkdir -p /opt/freeswitch/var/spool/fax \
+           /opt/freeswitch/var/spool/modem
 CMD ["/opt/gabby-potato/supervisord.conf.sh"]

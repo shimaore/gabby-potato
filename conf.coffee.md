@@ -3,7 +3,7 @@
     pkg = require './package.json'
 
     module.exports = renderable (cfg) ->
-      {doctype,document,section,configuration,settings,params,param,modules,module,load,network_lists,list,node,global_settings,profiles,profile,mappings,map,context,extension,condition,action,macros,gateways,gateway} = L
+      {doctype,document,section,configuration,settings,params,param,modules,module,load,network_lists,list,node,global_settings,profiles,profile,mappings,map,context,extension,condition,action,macros,gateways,gateway,tag} = L
       modules_to_load = [
         'mod_logfile'
         'mod_event_socket'
@@ -13,6 +13,7 @@
         'mod_sndfile'
         'mod_shout'
         'mod_sofia'
+        'mod_spandsp'
         'mod_tone_stream'
       ]
 
@@ -63,6 +64,30 @@
                   param 'enable-cacert-check', cfg.httapi_cacert_check ? true
                   param 'enable-ssl-verifyhost', cfg.httpapi_verify_host ? true
                   param 'timeout', cfg.httapi_timeout ? 120
+          configuration 'spandsp.confg', ->
+
+Hylafax-type modems
+
+            tag 'modem-settings', ->
+              param 'verbose', true
+              param 'total-modems', cfg.total_modems ? 2
+              param 'directory', '/opt/freeswitch/var/spool/modem'
+
+Inbound calls to modems
+
+              param "dialplan" , "inline:'socket:#{cfg.server_host}:#{cfg.server_socket} async full'"
+              param 'context', 'dummy-unused'
+
+            tag 'fax-settings', ->
+              param 'verbose', true
+
+              param 'use-ecm', true
+              param 'disable-v17', false
+              param 'ident', 'Gabby Potato'
+              param 'header', 'Gabby Potato over SpanDSP'
+
+              param 'spool-dir', '/opt/freeswitch/var/spool/fax'
+              param 'file-prefix', 'fax-rx-'
 
           configuration 'sofia.conf', ->
             global_settings ->
@@ -90,6 +115,7 @@ See [inline dialplain in SIP profile](https://wiki.freeswitch.org/wiki/Misc._Dia
 
                   param "dialplan" , "inline:'socket:#{cfg.server_host}:#{cfg.server_socket} async full'"
                   param "context" , 'dummy-unused'
+
                   param "sip-ip" , "auto"
                   param "ext-sip-ip" , "auto-nat"
                   # param "sip-port" , "auto"
