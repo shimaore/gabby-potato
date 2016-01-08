@@ -41,28 +41,37 @@ Events towards/from the Socket.IO client
           debug 'shutdown'
           yield supervisor.shutdownAsync()
 
+`put-fax` will put a file in the fax spool directory.
+
         io.on 'put-fax', seem ({data,name},ack) ->
           debug 'put-fax', {name}
           name ?= uuid.v4()
           file = path.join process.env.SPOOL, 'fax', name
           debug 'put-fax', {file,name}
-          res = yield fs.writeFileAsync(file, data).catch (error) ->
-            debug "put-fax: writeFileAsync: #{error}", {file}
-            error:"#{error}"
-          debug 'put-fax: ack', {file,name,res}
-          ack? {file,name,res}
+
+          error = null
+          yield fs.writeFileAsync(file, data).catch (e) ->
+            debug "put-fax: writeFileAsync: #{e}", {file}
+            error = "#{file}: #{e}"
+
+          debug 'put-fax: ack', {file,name,error}
+          ack? if error? then {name,error} else {file,name}
+
+`get-fax` will get a file from the fax spool directory.
 
         io.on 'get-fax', seem (name,ack) ->
           debug 'get-fax', {name}
           file = path.join process.env.SPOOL, 'fax', name
           debug 'get-fax', {file}
-          res = {}
-          data = yield fs.readFileAsync(file).catch (error) ->
-            debug "get-fax: readFileAsync: #{error}", {file}
-            res = error:"#{error}"
+
+          error = null
+          data = yield fs.readFileAsync(file).catch (e) ->
+            debug "get-fax: readFileAsync: #{e}", {file}
+            error = "#{file}: #{e}"
             null
-          debug 'get-fax: ack', {file,name}
-          ack? {data,file,name,res}
+
+          debug 'get-fax: ack', {file,name,error}
+          ack? if error? then {name,error} else {data,file,name}
 
 Events towards/from the Event Layer Socket
 ------------------------------------------
