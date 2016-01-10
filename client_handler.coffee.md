@@ -1,5 +1,5 @@
     seem = require 'seem'
-    uuid = require 'uuid'
+    UUID = require 'uuid'
     pkg = require './package'
     debug = (require 'debug') "#{pkg.name}:client_handler"
 
@@ -15,7 +15,7 @@ Events towards/from the Socket.IO client
 
         debug 'Client started'
         io.on 'originate', seem (destination,ack) =>
-          uuid = uuid.v4()
+          uuid = UUID.v4()
           cmd = "originate {origination_uuid=#{uuid},sip_cid_type=none}sofia/gateway/#{cfg.domain}/#{destination} '&socket(#{cfg.server_host}:#{cfg.server_socket} async full)'"
           debug 'originate', {destination,uuid,cmd}
           res = yield @api(cmd).catch (error) ->
@@ -45,7 +45,7 @@ Events towards/from the Socket.IO client
 
         io.on 'put-fax', seem ({data,name},ack) ->
           debug 'put-fax', {name}
-          name ?= uuid.v4()
+          name ?= UUID.v4()
           file = path.join process.env.SPOOL, 'fax', name
           debug 'put-fax', {file,name}
 
