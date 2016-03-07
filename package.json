@@ -1,5 +1,6 @@
 {
   "name": "gabby-potato",
+  "docker_name": "shimaore/gabby-potato",
   "version": "2.0.1",
   "description": "An automated endpoint for SIP testing",
   "scripts": {
