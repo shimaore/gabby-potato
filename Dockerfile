@@ -1,4 +1,4 @@
-FROM shimaore/freeswitch-with-sounds:2.2.11
+FROM shimaore/freeswitch-with-sounds:2.3.2
 MAINTAINER Stéphane Alnet <stephane@shimaore.net>
 ENV NODE_ENV production
 ENV SPOOL /opt/freeswitch/var/spool
