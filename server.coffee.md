@@ -15,9 +15,9 @@
         password: process.env.PASSWORD
         domain: process.env.DOMAIN
         expire: process.env.EXPIRE ? 1800
-        client_socket: 5721
+        client_socket: 25721
         client_host: '127.0.0.1'
-        server_socket: 5722
+        server_socket: 25722
         server_host: '127.0.0.1'
         fsconf: './conf/freeswitch.xml'
         log: './log'
