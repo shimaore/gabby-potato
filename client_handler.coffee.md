@@ -16,8 +16,22 @@ Events towards/from the Socket.IO client
         debug 'Client started'
         io.on 'originate', seem (destination,ack) =>
           uuid = UUID.v4()
-          cmd = "originate {origination_uuid=#{uuid},sip_cid_type=none}sofia/gateway/#{cfg.domain}/#{destination} '&socket(#{cfg.server_host}:#{cfg.server_socket} async full)'"
-          debug 'originate', {destination,uuid,cmd}
+          if typeof destination is 'string'
+            opts =
+              destination: destination
+          else
+            opts = destination
+          opts.params ?= {}
+          opts.params.origination_uuid = uuid
+          opts.params.sip_cid_type ?= 'none'
+
+          params = []
+          for own k,v of opts.params
+            params.push "#{k}=#{v}"
+          params_string = params.join ','
+
+          cmd = "originate {#{params_string}}sofia/gateway/#{cfg.domain}/#{opts.destination} '&socket(#{cfg.server_host}:#{cfg.server_socket} async full)'"
+          debug 'originate', {opts,uuid,cmd}
           res = yield @api(cmd).catch (error) ->
             debug "originate: #{error}", error
             {error:"#{error}"}
