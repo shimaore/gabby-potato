@@ -33,8 +33,9 @@ Events towards/from the Socket.IO client
           cmd = "originate {#{params_string}}sofia/gateway/#{cfg.domain}/#{opts.destination} '&socket(#{cfg.server_host}:#{cfg.server_socket} async full)'"
           debug 'originate', {opts,uuid,cmd}
           res = yield @api(cmd).catch (error) ->
-            debug "originate: #{error}", error
-            {error:"#{error}"}
+            msg = error.stack ? error.toString()
+            debug "originate: #{msg}"
+            {error:"#{msg}"}
           debug 'originate: ack', {ack,uuid,res}
           ack? if res.error? then {uuid,error:res.error} else {uuid,response:res.body}
         io.on 'action', seem ({uuid,application,data},ack) =>
