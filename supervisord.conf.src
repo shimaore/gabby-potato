@@ -13,11 +13,15 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 [program:server]
 command=%(here)s/node_modules/.bin/coffee %(here)s/server.coffee.md
 environment=SUPERVISOR="http://127.0.0.1:SUPERVISORD_PORT",MODE="config",FSCONF="%(here)s/conf/freeswitch.xml"
+stdout_logfile=%(here)s/log/%(program_name)s.log
+stderr_logfile=%(here)s/log/%(program_name)s.log
 priority=10
 autorestart=true
 
 [program:freeswitch]
 command=/opt/freeswitch/bin/freeswitch -c -conf %(here)s/conf -log %(here)s/log -db /dev/shm/freeswitch
+stdout_logfile=%(here)s/log/%(program_name)s.log
+stderr_logfile=%(here)s/log/%(program_name)s.log
 autostart=false
 autorestart=true
 priority=50
