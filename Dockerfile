@@ -1,4 +1,4 @@
-FROM shimaore/freeswitch-with-sounds:4.0.4
+FROM shimaore/docker.freeswitch
 MAINTAINER Stéphane Alnet <stephane@shimaore.net>
 ENV NODE_ENV production
 ENV SPOOL /opt/freeswitch/var/spool
@@ -20,7 +20,7 @@ RUN \
   make install && \
   cd .. && \
   rm -rf n.git && \
-  n 7.0.0 && \
+  n 9.11.1 && \
   apt-get purge -y \
     ca-certificates \
     curl \
