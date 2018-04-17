@@ -35,7 +35,7 @@ USER freeswitch
 COPY . /opt/gabby-potato/
 RUN \
   npm install && \
-  npm cache clean && \
+  npm cache clean --force && \
   rm -rf \
     /home/freeswitch/.node-gyp \
     /opt/freeswitch/etc/freeswitch/* \
