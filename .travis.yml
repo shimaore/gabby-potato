@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - '9'
+
+sudo: required
+services:
+  - docker
+
+before_script:
+  - docker build -t shimaore/gabby-potato-for-test .
+script:
+  - DEBUG='*' npm test

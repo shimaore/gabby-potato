@@ -1,11 +1,9 @@
     {renderable} = L = require 'acoustic-line'
-    {hostname} = require 'os'
     pkg = require './package.json'
 
     module.exports = renderable (cfg) ->
       {doctype,document,section,configuration,settings,params,param,modules,module,load,network_lists,list,node,global_settings,profiles,profile,mappings,map,context,extension,condition,action,macros,gateways,gateway,tag} = L
       modules_to_load = [
-        'mod_logfile'
         'mod_event_socket'
         'mod_commands'
         'mod_dptools'
@@ -20,9 +18,14 @@
       doctype()
       document 'freeswitch/xml', ->
         section 'configuration', ->
+          configuration 'acl.conf', ->
+            network_lists ->
+              list name:'docker', default:'deny', ->
+                node type:'allow', cidr:'127.0.0.0/8'
+                node type:'allow', cidr:'172.16.0.0/12'
           configuration 'switch.conf', ->
             settings ->
-              param 'switchname', "freeswitch-#{pkg.name}@#{hostname()}"
+              param 'switchname', "freeswitch-#{pkg.name}@#{cfg.hostname}"
               param 'core-db-name', "/dev/shm/freeswitch/core-#{pkg.name}.db"
               param 'rtp-start-port', 49152
               param 'rtp-end-port', 65534
@@ -48,10 +51,11 @@
           configuration 'event_socket.conf', ->
             settings ->
               param 'nat-map', false
-              param 'listen-ip', '127.0.0.1'
+              param 'listen-ip', '0.0.0.0'
               # Inbound-Socket port
-              param 'listen-port', cfg.client_socket
+              param 'listen-port', 8021
               param 'password', 'ClueCon'
+              param 'apply-inbound-acl', 'docker'
           configuration name:'httapi.conf', ->
             settings ->
             profiles ->

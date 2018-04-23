@@ -1,9 +1,11 @@
 .dockerignore
 .git
 .gitignore
+package-lock.json
 README.md
 env
 node_modules
+Dockerfile
 Makefile
 test
 local

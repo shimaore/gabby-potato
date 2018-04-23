@@ -12,7 +12,6 @@ RUN \
     curl \
     git \
     make \
-    supervisor \
   && \
 # Install Node.js using `n`.
   git clone https://github.com/tj/n.git n.git && \
@@ -44,4 +43,9 @@ RUN \
     /opt/freeswitch/htdocs && \
   mkdir -p ${SPOOL}/fax \
            ${SPOOL}/modem
-CMD ["/opt/gabby-potato/supervisord.conf.sh"]
+
+# 8021: FreeSwitch event socket
+# 3000: Axon publisher (notifies of new inbound calls)
+# 3001: Axon subscriber (submit commands to the calls)
+EXPOSE 8021 3000 3001
+CMD ["npm","start"]

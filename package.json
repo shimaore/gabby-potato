@@ -5,26 +5,21 @@
   "description": "An automated endpoint for SIP testing",
   "scripts": {
     "test": "mocha",
-    "pretest": "npm install",
-    "start": "coffee server.coffee.md"
+    "pretest": "npm install && rm package-lock.json && coffee -c test/*.coffee.md",
+    "install": "rm -f *.js && coffee -c *.coffee.md"
   },
   "author": "Stéphane Alnet <stephane@shimaore.net> (http://stephane.shimaore.net/)",
   "license": "Unlicense",
   "dependencies": {
-    "acoustic-line": "^1.8.0",
-    "bluebird": "^3.4.6",
-    "coffee-script": "^1.11.1",
-    "debug": "^2.2.0",
-    "esl": "^5.2.2",
-    "seem": "^2.0.0",
-    "socket.io-client": "^1.5.1",
-    "supervisord": "0.1.0",
-    "uuid": "^2.0.3"
+    "acoustic-line": "^1.9.0",
+    "axon": "^2.0.3",
+    "coffeescript": "^2.2.4",
+    "debug": "^3.1.0",
+    "esl": "^9.0.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "dockerode": "^2.3.1",
-    "mocha": "^3.1.2",
-    "zappajs": "^6.0.3"
+    "chai": "^4.1.2",
+    "dockerode": "^2.5.5",
+    "mocha": "^5.1.1"
   }
 }

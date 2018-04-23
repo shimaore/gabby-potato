@@ -1,75 +1,69 @@
-    seem = require 'seem'
-    IO = require 'socket.io-client'
+    Axon = require 'axon'
     FS = require 'esl'
     fs = require 'fs'
-    Promise = require 'bluebird'
-    Supervisor = require 'supervisord'
-    pkg = require './package'
-    debug = (require 'debug') "#{pkg.name}:server"
+    child_process = require 'child_process'
+    debug = (require 'debug') 'gabby-potato:server'
+    {hostname} = require 'os'
 
-    run = seem ->
-      supervisor = Promise.promisifyAll Supervisor.connect process.env.SUPERVISOR
+    run = ->
+      cwd = process.cwd()
 
       cfg =
+        hostname: process.env.HOSTNAME ? hostname()
         username: process.env.USERNAME
         password: process.env.PASSWORD
         domain: process.env.DOMAIN
         expire: process.env.EXPIRE ? 1800
-        client_socket: 25721
-        client_host: '127.0.0.1'
         server_socket: 25722
         server_host: '127.0.0.1'
-        fsconf: './conf/freeswitch.xml'
-        log: './log'
+        fsconf: "#{cwd}/conf/freeswitch.xml"
+        log: "#{cwd}/log"
 
 Generate configuration file
 
       xml = (require './conf') cfg
       fs.writeFileSync cfg.fsconf, xml, 'utf-8'
 
-The client connects to FreeSwitch and is able to send commands.
+Handle inbound calls
 
-      io = IO process.env.IO
-      client_handler = (require './client_handler') cfg, io
+      pub = Axon.socket 'pub'
+      pub.bind 3000
 
-The server is called by FreeSwitch and handle a call.
+Is the `sub` necessary? We can send events over the Event Socket using the UUID.
 
-      server = FS.server ->
+      sub = Axon.socket 'sub'
+      sub.bind 3001
 
-Start a new Socket.IO stream for this call.
+      call_handler = ->
+        pub.send @uuid, @data
 
-        call_io = IO process.env.IO
-        call_io.on 'action', seem ({application,data},ack) =>
-          debug 'action', {application,data}
-          res = yield @command application, data
-          debug 'action response', ack, res
-          ack? res
-        call_io.emit 'inbound call', @data
+        sub.on 'message', (uuid,cmd,data) =>
+          return unless uuid is @uuid
+          this[cmd].apply this, data
 
-      debug "Starting server on #{cfg.server_host}:#{cfg.server_socket}"
-      server.listen cfg.server_socket, cfg.server_host
+      server = FS.server call_handler
 
 Start FreeSwitch
 
-      start_client = ->
-        debug "Client: connecting to #{cfg.client_host}:#{cfg.client_socket}"
-        client = FS.client client_handler, (error) ->
-          debug "Client handler error: #{error}", error
-          client = null
-          start_client()
-
-        sc = client.connect cfg.client_socket, cfg.client_host
-        sc.once 'error', seem (error) ->
-          debug "Client error: #{error}, re-trying in 500 ms"
-          sc = client = null
-          yield Promise.delay 500
-          start_client()
-        sc
-
       debug 'Starting FreeSwitch'
-      yield supervisor.startProcessAsync 'freeswitch'
-      debug 'FreeSwitch started, starting client.'
-      start_client()
+      child = child_process.spawn '/opt/freeswitch/bin/freeswitch',
+        [
+          '-c'
+          '-nf'
+          '-conf', "#{cwd}/conf"
+          '-log', "#{cwd}/log"
+          '-db', '/dev/shm/freeswitch'
+          '-temp', "#{cwd}/log"
+        ],
+        stdio: 'inherit'
+      child.on 'error', (error) ->
+        debug "Failed to start FreeSwitch: #{error}"
+      child.on 'exit', (code) ->
+        debug "FreeSwitch exit'ed with code #{code}."
+      child.on 'close', (code) ->
+        debug "FreeSwitch closed stdio with code #{code}."
+        server.close -> process.exit 0
+      server.listen cfg.server_socket, cfg.server_host
 
       debug 'Ready.'
 

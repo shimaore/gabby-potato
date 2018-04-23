@@ -5,9 +5,9 @@
 
       it 'should compile', ->
         cfg =
-          client_socket: 5721
           server_host: 'example.net'
           server_socket: 6712
+          hostname: 'test.example.net'
           domain: 'example.com'
           username: 'foo'
           password: 'bar'
@@ -17,9 +17,17 @@
           <?xml version="1.0" encoding="utf-8" ?>
           <document type="freeswitch/xml">
           <section name="configuration">
+          <configuration name="acl.conf">
+          <network-lists>
+          <list name="docker" default="deny">
+          <node type="allow" cidr="127.0.0.0/8"/>
+          <node type="allow" cidr="172.16.0.0/12"/>
+          </list>
+          </network-lists>
+          </configuration>
           <configuration name="switch.conf">
           <settings>
-          <param name="switchname" value="freeswitch-gabby-potato@voyageur.shimaore.net"/>
+          <param name="switchname" value="freeswitch-gabby-potato@test.example.net"/>
           <param name="core-db-name" value="/dev/shm/freeswitch/core-gabby-potato.db"/>
           <param name="rtp-start-port" value="49152"/>
           <param name="rtp-end-port" value="65534"/>
@@ -31,7 +39,6 @@
           </configuration>
           <configuration name="modules.conf">
           <modules>
-          <load module="mod_logfile"/>
           <load module="mod_event_socket"/>
           <load module="mod_commands"/>
           <load module="mod_dptools"/>
@@ -63,9 +70,10 @@
           <configuration name="event_socket.conf">
           <settings>
           <param name="nat-map" value="false"/>
-          <param name="listen-ip" value="127.0.0.1"/>
-          <param name="listen-port" value="5721"/>
+          <param name="listen-ip" value="0.0.0.0"/>
+          <param name="listen-port" value="8021"/>
           <param name="password" value="ClueCon"/>
+          <param name="apply-inbound-acl" value="docker"/>
           </settings>
           </configuration>
           <configuration name="httapi.conf">
