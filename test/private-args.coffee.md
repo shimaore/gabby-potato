@@ -9,7 +9,7 @@
     sleep = (timeout) ->
       new Promise (resolve) -> setTimeout resolve, timeout
 
-    describe 'When starting the docker image', ->
+    describe 'When starting the docker image with arguments', ->
       @timeout 20000
       started = false
 
@@ -20,19 +20,16 @@
           [],
           if process.env.DEBUG_FS then [process.stdout,process.stderr] else null,
           {
-            Env:[
-              "USERNAME=foo"
-              "PASSWORD=bar"
-              "DOMAIN=phone.example.net"
-              "HOSTNAME=test.example.net"
-              "EXPIRE=1800"
-              "DEBUG=*"
+            Cmd: [ JSON.stringify
+              username:'foo'
+              password:'bar'
+              domain:'phone.example.net'
             ]
             HostConfig:
               PortBindings:
-                '8021/tcp': [HostPort: '8021']
-                '3000/tcp': [HostPort: '3000']
-                '3001/tcp': [HostPort: '3001']
+                '8021/tcp': [HostPort: '9021']
+                '3000/tcp': [HostPort: '4000']
+                '3001/tcp': [HostPort: '4001']
             Tty: false
           },
           (error,data,container) ->
@@ -57,7 +54,7 @@
           await @exit().catch -> yes
           @end()
           done()
-        .connect 8021
+        .connect 9021
         return
 
       it 'should stop', (done) ->
@@ -68,5 +65,5 @@
           done()
         .on 'error', (error) ->
           debug "Caught #{error}"
-        .connect 8021
+        .connect 9021
         return

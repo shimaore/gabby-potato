@@ -48,4 +48,5 @@ RUN \
 # 3000: Axon publisher (notifies of new inbound calls)
 # 3001: Axon subscriber (submit commands to the calls)
 EXPOSE 8021 3000 3001
-CMD ["npm","start"]
+ENTRYPOINT ["node","server.js"]
+CMD ["{}"]

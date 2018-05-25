@@ -19,6 +19,10 @@
         fsconf: "#{cwd}/conf/freeswitch.xml"
         log: "#{cwd}/log"
 
+      try
+        cmd = JSON.parse process.argv[2]
+        cfg = Object.assign cfg, cmd if cmd?
+
 Generate configuration file
 
       xml = (require './conf') cfg
